@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversor de Monedas</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+    <div class="conversor">
+        <h1>Conversor de Monedas</h1>
+        <div class="monedas">
+            <p>Pesos CLP</p>
+            <input type="number" id="inputCLP" placeholder="0">
+
+            <p>Moneda a convertir</p>
+
+            <select id="select">
+                <option value="dolar">Dolar</option>
+                <option value="euro"> Euro</option>
+            </select>
+            <br>
+            <div>
+                <button id="convertir">Buscar</button>
+            </div>
+            <p id="resultado"></p>
+        </div>
+    </div>
+
+    <div class="grafica">
+        <canvas id="myChart"></canvas>
+    </div>
+
+    <script>
+
+        let grafico;
+
+        document.getElementById("convertir").addEventListener("click", convertirMonedas)
+
+        async function convertirMonedas() {
+
+            const clp = Number(document.getElementById("inputCLP").value);
+            const moneda = document.getElementById("select").value;
+
+            try {
+                const res = await fetch("https://mindicador.cl/api");
+                const datos = await res.json();
+                const valorMoneda = datos[moneda].valor;
+
+                const resultado = clp / valorMoneda;
+                document.getElementById("resultado").textContent =
+                    `Con ${clp} CLP obtienes aproximadamente ${resultado.toFixed(2)} ${moneda.toUpperCase()}(últimos 10 días)`
+
+
+                const resHist = await fetch(`https://mindicador.cl/api/${moneda}`);
+                const datosHist = await resHist.json();
+
+                const ultimos = datosHist.serie.slice(0, 10).reverse();
+
+                const labels = ultimos.map(item =>
+                    new Date(item.fecha).toLocaleDateString()
+                );
+                
+                const valores = ultimos.map(item => item.valor);
+
+                const config = {
+                    type: "line",
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: `Valor del ${moneda.toUpperCase()} (últimos 10 días)`,
+                            data: valores,
+                            borderColor: "red",
+                            fill: true,
+                            tension: 0.3
+                        }]
+                    }
+                };
+
+     if (grafico) {
+                grafico.destroy();
+            }
+
+        const ctx = document.getElementById("myChart").getContext("2d");
+         grafico = new Chart(ctx,config);
+
+            }catch (error) {
+            console.error("Error al convertir moneda", error);
+            document.getElementById("resultado").textContent = "Error al obtener los datos";
+        } 
+     }
+         </script>
+</body>
+
+</html>
