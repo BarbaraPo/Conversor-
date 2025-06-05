@@ -4,9 +4,7 @@ body {
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif
 }
 
-
 .conversor {
-
     background-color: black;
     display: flex;
     flex-direction: column;
@@ -29,8 +27,12 @@ p {
     border: solid 3px;
     background-color: rgb(148, 157, 157);
     padding: 20px 30px;
-    
+}
 
+select {
+    padding-left: 3.4rem;
+    padding-right: 3.4rem;
+    font-size: large;
 }
 
 button {
@@ -38,7 +40,8 @@ button {
     padding: 8px;
     padding-left: 15px;
     padding-right: 15px;
-
- background-color: rgb(130, 180, 244);
- color: white;
+    background-color: rgb(130, 180, 244);
+    color: white;
+    font-size: large;
+    border: none;
 }
